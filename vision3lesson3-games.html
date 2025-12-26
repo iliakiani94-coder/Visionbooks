@@ -1,0 +1,200 @@
+<meta name='viewport' content='width=device-width, initial-scale=1'/><meta name='viewport' content='width=device-width, initial-scale=1'/>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Lesson 3 – Reading Games (Grade 12)</title>
+
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f7fb;
+  margin: 0;
+  padding: 30px 15px;
+}
+
+h1 {
+  text-align: center;
+  color: #1f2937;
+  margin-bottom: 25px;
+}
+
+.menu {
+  max-width: 750px;
+  margin: 0 auto 30px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 15px;
+}
+
+.menu button {
+  padding: 18px;
+  font-size: 16px;
+  background-color: #1e3a8a;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.menu button:hover {
+  background-color: #1e40af;
+}
+
+.game-box {
+  max-width: 750px;
+  margin: auto;
+  background-color: #ffffff;
+  padding: 28px;
+  border-radius: 12px;
+  display: none;
+}
+
+.q-number {
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.options button {
+  display: block;
+  margin: 10px 0;
+  padding: 12px;
+  width: 100%;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.back {
+  margin-top: 25px;
+  display: inline-block;
+  color: #1e3a8a;
+  cursor: pointer;
+}
+</style>
+</head>
+
+<body>
+
+<h1>Lesson 3 – Reading Games<br>(Grade 12)</h1>
+
+<div class="menu">
+  <button onclick="startGame(vocab)">Vocabulary in Context</button>
+  <button onclick="startGame(tf)">True / False</button>
+  <button onclick="startGame(mainIdea)">Main Idea & Purpose</button>
+  <button onclick="startGame(match)">Sentence & Idea Matching</button>
+</div>
+
+<div id="game" class="game-box"></div>
+
+<script>
+const gameBox = document.getElementById("game");
+let questions = [];
+let index = 0;
+let score = 0;
+
+/* ========== VOCABULARY (10) ========== */
+const vocab = [
+ {q:"Electric cars do not burn ____.", a:["electricity","gasoline","batteries"], c:1},
+ {q:"Electric cars do not ____ the air.", a:["cool","pollute","heat"], c:1},
+ {q:"Electric cars store energy in ____.", a:["engines","batteries","wires"], c:1},
+ {q:"An electric motor turns the ____.", a:["lights","wheels","battery"], c:1},
+ {q:"Batteries must be ____ before use.", a:["replaced","charged","removed"], c:1},
+ {q:"Electric cars are often charged at ____.", a:["school","night","work"], c:1},
+ {q:"Some electric cars use a ____ wall outlet.", a:["special","broken","regular"], c:2},
+ {q:"Engineers try to make batteries last ____.", a:["shorter","longer","less"], c:1},
+ {q:"Hybrid cars use gasoline and ____.", a:["solar power","electric motors","water"], c:1},
+ {q:"Hybrid cars improve fuel ____.", a:["price","design","economy"], c:2}
+];
+
+/* ========== TRUE / FALSE (10) ========== */
+const tf = [
+ {q:"Electric cars burn fossil fuels.", c:false},
+ {q:"Electric cars do not pollute the air.", c:true},
+ {q:"Electric cars use electric motors.", c:true},
+ {q:"An electric car has only one battery.", c:false},
+ {q:"Electricity is stored in batteries.", c:true},
+ {q:"Charging an electric car is similar to charging a phone.", c:true},
+ {q:"Electric cars can only be charged in factories.", c:false},
+ {q:"Some cars need special outlets for charging.", c:true},
+ {q:"Hybrid cars only use gasoline.", c:false},
+ {q:"Hybrid cars combine two types of power.", c:true}
+];
+
+/* ========== MAIN IDEA (10) ========== */
+const mainIdea = [
+ {q:"What is the passage mainly about?", a:["Fuel prices","Electric and hybrid cars","Public transport"], c:1},
+ {q:"Why are electric cars preferred?", a:["They are cheaper","They don't pollute air","They are smaller"], c:1},
+ {q:"What makes electric cars move?", a:["Gas engine","Electric motor","Wind"], c:1},
+ {q:"What must be done before using electric cars?", a:["Repair","Clean","Charge batteries"], c:2},
+ {q:"Charging electric cars is similar to charging ____.", a:["TV","Laptop","Portable devices"], c:2},
+ {q:"Where are electric cars usually charged?", a:["During the day","At night","At school"], c:1},
+ {q:"Why are engineers improving batteries?", a:["To make cars faster","To last longer","To change color"], c:1},
+ {q:"Hybrid cars are designed to ____.", a:["Look better","Meet different goals","Replace bikes"], c:1},
+ {q:"The tone of the text is:", a:["Informative","Angry","Funny"], c:0},
+ {q:"Best title for the passage is:", a:["Future of Cars","Car Problems","Using Gasoline"], c:0}
+];
+
+/* ========== MATCHING / LOGICAL (10) ========== */
+const match = [
+ {q:"Electric cars → ?", a:["Pollution","Clean air","Noise"], c:1},
+ {q:"Electric motor → ?", a:["Turns wheels","Charges battery","Burns fuel"], c:0},
+ {q:"Battery → ?", a:["Stores electricity","Cools engine","Moves car alone"], c:0},
+ {q:"Charging → ?", a:["Using fuel","Storing energy","Driving fast"], c:1},
+ {q:"Regular outlet → ?", a:["House electricity","Factory machine","Engine"], c:0},
+ {q:"Special outlet → ?", a:["Higher power","Decoration","Lights"], c:0},
+ {q:"Engineers → ?", a:["Sell cars","Improve batteries","Drive taxis"], c:1},
+ {q:"Hybrid cars → ?", a:["Electric only","Gasoline only","Both systems"], c:2},
+ {q:"Better fuel economy → ?", a:["More gas use","Less fuel use","More pollution"], c:1},
+ {q:"Electric cars power source → ?", a:["Water","Electricity","Coal"], c:1}
+];
+
+function startGame(list) {
+  questions = list;
+  index = 0;
+  score = 0;
+  gameBox.style.display = "block";
+  showQuestion();
+}
+
+function showQuestion() {
+  if (index >= questions.length) {
+    gameBox.innerHTML = `
+      <h3>Finished ✅</h3>
+      <p>Your Score: <b>${score} / 10</b></p>
+      <div class="back" onclick="exitGame()">← Back to menu</div>
+    `;
+    return;
+  }
+
+  const q = questions[index];
+  let html = `<div class="q-number">Question ${index+1} of 10</div><p>${q.q}</p><div class="options">`;
+
+  if (q.a) {
+    q.a.forEach((opt,i)=>{
+      html += `<button onclick="answer(${i === q.c})">${opt}</button>`;
+    });
+  } else {
+    html += `
+      <button onclick="answer(${q.c === true})">True</button>
+      <button onclick="answer(${q.c === false})">False</button>
+    `;
+  }
+
+  html += `</div>`;
+  gameBox.innerHTML = html;
+}
+
+function answer(correct) {
+  if (correct) score++;
+  index++;
+  showQuestion();
+}
+
+function exitGame() {
+  gameBox.style.display = "none";
+}
+</script>
+
+</body>
+</html>

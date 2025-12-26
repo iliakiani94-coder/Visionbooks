@@ -1,0 +1,203 @@
+<meta name='viewport' content='width=device-width, initial-scale=1'/><meta name='viewport' content='width=device-width, initial-scale=1'/>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Lesson 2 – Reading Games (Grade 12)</title>
+
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f7fb;
+  margin: 0;
+  padding: 30px 15px;
+}
+
+h1 {
+  text-align: center;
+  color: #1f2937;
+  margin-bottom: 25px;
+}
+
+.menu {
+  max-width: 750px;
+  margin: 0 auto 30px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 15px;
+}
+
+.menu button {
+  padding: 18px;
+  font-size: 16px;
+  background-color: #1e3a8a;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.menu button:hover {
+  background-color: #1e40af;
+}
+
+.game-box {
+  max-width: 750px;
+  margin: auto;
+  background-color: #ffffff;
+  padding: 28px;
+  border-radius: 12px;
+  display: none;
+}
+
+.q-number {
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.options button {
+  display: block;
+  margin: 10px 0;
+  padding: 12px;
+  width: 100%;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.correct { color: green; }
+.wrong { color: crimson; }
+
+.back {
+  margin-top: 25px;
+  display: inline-block;
+  color: #1e3a8a;
+  cursor: pointer;
+}
+</style>
+</head>
+
+<body>
+
+<h1>Lesson 2 – Reading Games<br>(Grade 12)</h1>
+
+<div class="menu">
+  <button onclick="startGame(vocab)">Vocabulary in Context</button>
+  <button onclick="startGame(tf)">True / False</button>
+  <button onclick="startGame(mainIdea)">Main Idea & Purpose</button>
+  <button onclick="startGame(match)">Sentence & Idea Matching</button>
+</div>
+
+<div id="game" class="game-box"></div>
+
+<script>
+const gameBox = document.getElementById("game");
+let questions = [];
+let index = 0;
+let score = 0;
+
+/* ========== VOCABULARY (10) ========== */
+const vocab = [
+ {q:"A dictionary ____ the meanings of words.", a:["creates","explains","changes"], c:1},
+ {q:"Words are put in ____ order in a dictionary.", a:["random","alphabetical","historical"], c:1},
+ {q:"The word 'dictionary' comes from ____ language.", a:["Greek","Latin","Persian"], c:1},
+ {q:"A dictionary gives the ____ of words.", a:["definition","story","picture"], c:0},
+ {q:"IPA is used to show ____.", a:["meaning","pronunciation","spelling"], c:1},
+ {q:"A biography dictionary tells about ____ people.", a:["ordinary","famous","unknown"], c:1},
+ {q:"Technical dictionaries explain ____ words.", a:["simple","scientific","technical"], c:2},
+ {q:"Bilingual dictionaries translate words from one ____ to another.", a:["city","language","book"], c:1},
+ {q:"The word 'present' can be a noun, verb or ____.", a:["adjective","adverb","pronoun"], c:0},
+ {q:"Some English words entered from ____ language.", a:["Arabic","Persian","French"], c:1}
+];
+
+/* ========== TRUE / FALSE (10) ========== */
+const tf = [
+ {q:"Dictionaries arrange words alphabetically.", c:true},
+ {q:"The word 'dictionary' has Persian origin.", c:false},
+ {q:"All dictionaries are bilingual.", c:false},
+ {q:"IPA helps with pronunciation.", c:true},
+ {q:"One word can have more than one meaning.", c:true},
+ {q:"The word 'right' has only one meaning.", c:false},
+ {q:"Some dictionaries explain technical words.", c:true},
+ {q:"A good dictionary lists all meanings of a word.", c:true},
+ {q:"‘Present’ can only be used as a noun.", c:false},
+ {q:"Some English words come from Persian.", c:true}
+];
+
+/* ========== MAIN IDEA (10) ========== */
+const mainIdea = [
+ {q:"What is the passage mainly about?", a:["Grammar rules","Using dictionaries","Learning history"], c:1},
+ {q:"What helps users find words easily?", a:["Pictures","Alphabetical order","Stories"], c:1},
+ {q:"Why is IPA important?", a:["For spelling","For pronunciation","For translation"], c:1},
+ {q:"What should users be careful about?", a:["Size of dictionary","Right meaning of words","Word color"], c:1},
+ {q:"Which dictionary tells about famous people?", a:["Technical","Bilingual","Biography"], c:2},
+ {q:"A good dictionary provides ____ information.", a:["less","no","more"], c:2},
+ {q:"Purpose of bilingual dictionaries is ____.", a:["Storytelling","Translation","Teaching grammar"], c:1},
+ {q:"The author’s attitude toward dictionaries is:", a:["Negative","Neutral","Useful"], c:2},
+ {q:"Main focus of the text is:", a:["Types and uses","History only","Pronunciation only"], c:0},
+ {q:"Best title for the text is:", a:["Power of Words","Using a Dictionary","Learning Persian"], c:1}
+];
+
+/* ========== MATCHING / LOGICAL (10) ========== */
+const match = [
+ {q:"Alphabetical order → ?", a:["Easy search","Pronunciation","Meaning"], c:0},
+ {q:"IPA → ?", a:["Spelling","Pronunciation","Translation"], c:1},
+ {q:"Bilingual dictionary → ?", a:["One language","Two languages","Pictures"], c:1},
+ {q:"Biography dictionary → ?", a:["Technical terms","Famous people","Old words"], c:1},
+ {q:"Technical dictionary → ?", a:["Stories","Scientific terms","Names"], c:1},
+ {q:"Word meanings → ?", a:["One","Several","None"], c:1},
+ {q:"Right meaning → ?", a:["Always same","Depends on context","Unimportant"], c:1},
+ {q:"Word origin → ?", a:["Pronunciation","History of word","Grammar"], c:1},
+ {q:"Present (noun) → ?", a:["Gift","Absent","Give"], c:0},
+ {q:"Persian loanwords → ?", a:["Bazaar","Apple","Table"], c:0}
+];
+
+function startGame(list) {
+  questions = list;
+  index = 0;
+  score = 0;
+  gameBox.style.display = "block";
+  showQuestion();
+}
+
+function showQuestion() {
+  if (index >= questions.length) {
+    gameBox.innerHTML = `
+      <h3>Finished ✅</h3>
+      <p>Your Score: <b>${score} / 10</b></p>
+      <div class="back" onclick="exitGame()">← Back to menu</div>
+    `;
+    return;
+  }
+
+  const q = questions[index];
+  let html = `<div class="q-number">Question ${index+1} of 10</div><p>${q.q}</p><div class="options">`;
+
+  if (q.a) {
+    q.a.forEach((opt,i)=>{
+      html += `<button onclick="answer(${i === q.c})">${opt}</button>`;
+    });
+  } else {
+    html += `
+      <button onclick="answer(${q.c === true})">True</button>
+      <button onclick="answer(${q.c === false})">False</button>
+    `;
+  }
+
+  html += `</div>`;
+  gameBox.innerHTML = html;
+}
+
+function answer(correct) {
+  if (correct) score++;
+  index++;
+  showQuestion();
+}
+
+function exitGame() {
+  gameBox.style.display = "none";
+}
+</script>
+
+</body>
+</html>
